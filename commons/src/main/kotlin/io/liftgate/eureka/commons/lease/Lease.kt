@@ -48,7 +48,11 @@ class Lease<T>(
             return when (strategy)
             {
                 LeaseStrategy.Compute -> this.compute()
-                LeaseStrategy.Expired -> this.valueExpired
+                LeaseStrategy.Expired ->
+                {
+                    this.asyncCompute()
+                    this.valueExpired
+                }
             }
         }
 
