@@ -3,6 +3,7 @@ package io.liftgate.eureka.commons.rank
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.message.AwareMessage
 import io.liftgate.eureka.commons.communication.Communications
+import io.liftgate.eureka.commons.lease.LeaseDependency
 
 /**
  * @author GrowlyX
@@ -16,6 +17,10 @@ object RankCommunicator
         message: AwareMessage
     )
     {
-        
+        RankService.invalidate()
+        RankService.reload().join()
+
+        LeaseDependency
+            .invalidateDependant(Rank::class)
     }
 }

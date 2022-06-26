@@ -5,6 +5,7 @@ import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.reflections.PackageIndexer
+import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import io.liftgate.eureka.commons.LiftEurekaPlatform
@@ -40,5 +41,11 @@ object CommunicationsService
         aware.connect()
             .toCompletableFuture()
             .join()
+    }
+
+    @Close
+    fun close()
+    {
+        aware.shutdown()
     }
 }

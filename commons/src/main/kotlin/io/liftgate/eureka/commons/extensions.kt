@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
@@ -27,5 +28,6 @@ fun UUID.audience() = platform
 
 inline fun <reified T> lease(
     strategy: LeaseStrategy = LeaseStrategy.Compute,
+    dependencies: List<Any> = listOf(),
     noinline compute: () -> T
-): Lease<T> = Lease(compute, strategy)
+): Lease<T> = Lease(compute, strategy, dependencies)

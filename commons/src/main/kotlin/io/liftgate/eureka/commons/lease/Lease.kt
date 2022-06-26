@@ -2,6 +2,7 @@ package io.liftgate.eureka.commons.lease
 
 import java.util.concurrent.ForkJoinPool
 import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 /**
@@ -10,7 +11,8 @@ import kotlin.reflect.KProperty
  */
 class Lease<T>(
     private val compute: () -> T,
-    private val strategy: LeaseStrategy
+    private val strategy: LeaseStrategy,
+    val dependencies: List<Any>
 ) : ReadOnlyProperty<Any?, T?>
 {
     private var value: T? = null
@@ -20,9 +22,15 @@ class Lease<T>(
 
     init
     {
+        LeaseDependency.leases.add(this)
+
         if (this.strategy == LeaseStrategy.Eager)
         {
-            this.compute()
+            runCatching {
+                this.compute()
+            }.onFailure {
+                it.printStackTrace()
+            }
         }
     }
 

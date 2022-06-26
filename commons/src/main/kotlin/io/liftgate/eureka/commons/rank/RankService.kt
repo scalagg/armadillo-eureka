@@ -67,7 +67,8 @@ object RankService
 
     // TODO: invalidate lease cache on new rank creation/update
     val sortedRankFormat by lease(
-        strategy = LeaseStrategy.Compute
+        strategy = LeaseStrategy.Compute,
+        dependencies = listOf(Rank::class)
     ) {
         val component = Component.empty()
         val ranks = ranks.values
