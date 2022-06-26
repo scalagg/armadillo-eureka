@@ -1,7 +1,7 @@
 package io.liftgate.eureka.commons.lease
 
 import java.util.concurrent.ForkJoinPool
-import kotlin.properties.ReadWriteProperty
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
 class Lease<T>(
     private val compute: () -> T,
     private val strategy: LeaseStrategy
-) : ReadWriteProperty<Any?, T?>
+) : ReadOnlyProperty<Any?, T?>
 {
     private var value: T? = null
     private var valueExpired: T? = null
@@ -58,11 +58,4 @@ class Lease<T>(
     override fun getValue(
         thisRef: Any?, property: KProperty<*>
     ) = this.value()
-
-    override fun setValue(
-        thisRef: Any?, property: KProperty<*>, value: T?
-    )
-    {
-        throw IllegalStateException("You cannot set.")
-    }
 }

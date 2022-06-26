@@ -11,7 +11,7 @@ import java.util.*
  * @author GrowlyX
  * @since 6/25/2022
  */
-val forever = ChronoUnit.FOREVER.duration
+val forever = ChronoUnit.FOREVER.duration!!
 
 val platform: LiftEurekaPlatform
     get() = LiftEurekaCommons.platform
