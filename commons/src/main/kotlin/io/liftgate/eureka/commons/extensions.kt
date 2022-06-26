@@ -22,7 +22,8 @@ fun String.text() =
 fun String.legacy() = LegacyComponentSerializer
     .legacyAmpersand().deserialize(this)
 
-fun UUID.audience() = platform.audience
+fun UUID.audience() = platform
+    .audience.value.player(this)
 
 inline fun <reified T> lease(
     strategy: LeaseStrategy = LeaseStrategy.Compute,

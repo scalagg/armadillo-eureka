@@ -1,11 +1,16 @@
 package io.liftgate.eureka.commons.rank
 
+import gg.scala.flavor.FlavorOptions
+import gg.scala.flavor.reflections.PackageIndexer
+import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import io.liftgate.eureka.commons.lease
 import io.liftgate.eureka.commons.lease.LeaseStrategy
+import io.liftgate.eureka.commons.rank.metadata.RankMetadata
+import io.liftgate.eureka.commons.rank.metadata.annotate.MetadataDefault
 import io.liftgate.eureka.commons.rank.metadata.defaults.DisplayNameMetadata
 import io.liftgate.eureka.commons.rank.metadata.defaults.NameMetadata
 import io.liftgate.eureka.commons.rank.metadata.defaults.VisibilityMetadata
@@ -26,6 +31,18 @@ object RankService
     private val ranks =
         mutableMapOf<UUID, Rank>()
 
+    private val metadataIndexer = PackageIndexer(
+        RankMetadata::class,
+        FlavorOptions(
+            `package` = "io.liftgate.eureka.commons.rank.metadata.defaults"
+        )
+    )
+
+    @Suppress("UNCHECKED_CAST")
+    private val defaults = metadataIndexer
+        .getTypesAnnotatedWith<MetadataDefault>()
+        .map { it as Class<RankMetadata<*>> }
+
     fun available() = ranks.size
 
     @Configure
@@ -36,6 +53,16 @@ object RankService
 
         invalidate()
         reload()
+    }
+
+    @Close
+    fun close() = invalidate()
+
+    fun configureDefaultMeta(rank: Rank)
+    {
+        rank.container.registerDefaults(
+            *defaults.map { it.kotlin }.toTypedArray()
+        )
     }
 
     // TODO: invalidate lease cache on new rank creation/update

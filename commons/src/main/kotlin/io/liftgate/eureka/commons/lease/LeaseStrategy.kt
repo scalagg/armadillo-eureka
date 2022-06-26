@@ -6,5 +6,7 @@ package io.liftgate.eureka.commons.lease
  */
 enum class LeaseStrategy
 {
-    Expired, Compute
+    Expired,
+    Compute,
+    Eager
 }

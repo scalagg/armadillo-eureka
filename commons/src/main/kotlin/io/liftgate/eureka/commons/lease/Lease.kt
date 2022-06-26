@@ -18,6 +18,14 @@ class Lease<T>(
 
     private var lock = Any()
 
+    init
+    {
+        if (this.strategy == LeaseStrategy.Eager)
+        {
+            this.compute()
+        }
+    }
+
     fun invalidate()
     {
         this.valueExpired = this.value
@@ -47,7 +55,7 @@ class Lease<T>(
         {
             return when (strategy)
             {
-                LeaseStrategy.Compute -> this.compute()
+                LeaseStrategy.Compute, LeaseStrategy.Eager -> this.compute()
                 LeaseStrategy.Expired ->
                 {
                     this.asyncCompute()

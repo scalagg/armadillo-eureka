@@ -15,4 +15,12 @@ data class Rank(
 ) : IDataStoreObject
 {
     val container = RankMetadataContainer()
+
+    init
+    {
+        if (this.container.metadata.isEmpty())
+        {
+            RankService.configureDefaultMeta(this)
+        }
+    }
 }

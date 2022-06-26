@@ -1,6 +1,7 @@
 package io.liftgate.eureka.commons
 
 import net.kyori.adventure.platform.AudienceProvider
+import java.util.logging.Logger
 
 /**
  * @author GrowlyX
@@ -8,10 +9,6 @@ import net.kyori.adventure.platform.AudienceProvider
  */
 interface LiftEurekaPlatform
 {
-    val audience: AudienceProvider
-
-    fun configure()
-    {
-        // TODO: configure abstracttypeserializable for RankMetadata
-    }
+    val audience: Lazy<AudienceProvider>
+    val logging: Logger
 }

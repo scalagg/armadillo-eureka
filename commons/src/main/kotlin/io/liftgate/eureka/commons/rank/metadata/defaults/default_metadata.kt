@@ -1,6 +1,7 @@
 package io.liftgate.eureka.commons.rank.metadata.defaults
 
 import io.liftgate.eureka.commons.rank.RankService
+import io.liftgate.eureka.commons.rank.metadata.annotate.MetadataDefault
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor
  * @author GrowlyX
  * @since 6/26/2022
  */
+@MetadataDefault
 class NameMetadata : DefaultMetadata<String>("Default")
 {
     override fun parse(input: String) = input
@@ -17,6 +19,7 @@ class NameMetadata : DefaultMetadata<String>("Default")
         "Describes the rank mentioned in a single word."
 }
 
+@MetadataDefault
 class DisplayNameMetadata : MiniMessageMetadata(
     Component.empty()
         .color(NamedTextColor.GRAY)
@@ -30,6 +33,7 @@ class DisplayNameMetadata : MiniMessageMetadata(
         "Displayed on the response of a list command, scoreboard, or something else."
 }
 
+@MetadataDefault
 class PrefixMetadata : MiniMessageMetadata(
     Component.empty().color(NamedTextColor.GRAY)
 )
@@ -39,6 +43,7 @@ class PrefixMetadata : MiniMessageMetadata(
         "Displayed at the beginning of the player's username in a chat message."
 }
 
+@MetadataDefault
 class SuffixMetadata : MiniMessageMetadata(
     Component.empty()
 )
@@ -48,6 +53,7 @@ class SuffixMetadata : MiniMessageMetadata(
         "Displayed at the end of the player's username in a chat message."
 }
 
+@MetadataDefault
 class ColorMetadata : MiniMessageMetadata(
     Component.empty().color(NamedTextColor.GRAY)
 )
@@ -57,6 +63,7 @@ class ColorMetadata : MiniMessageMetadata(
         "Displayed at the beginning of a name-tag, or something of that sort."
 }
 
+@MetadataDefault
 class VisibilityMetadata : BooleanMetadata(true)
 {
     override fun name() = "Visibility"
@@ -64,6 +71,7 @@ class VisibilityMetadata : BooleanMetadata(true)
         "Is this a public rank or no? You decide"
 }
 
+@MetadataDefault
 class WeightMetadata : IntegerMetadata(RankService.available())
 {
     override fun name() = "Weight"
