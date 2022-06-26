@@ -1,26 +1,103 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.0'
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "org.jetbrains.kotlin.jvm" version "1.7.0"
+    id "org.jetbrains.kotlin.kapt" version "1.7.0"
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+String environmental(String key)
+{
+    final String environment =
+        System.getenv(key)
 
-repositories {
-    mavenCentral()
+    if (environment != null)
+    {
+        return environment
+    }
+
+    return project.property(key)
 }
 
-dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+allprojects {
+    group "io.liftgate.lib"
+    version "2.0.0"
+
+    repositories {
+        mavenCentral()
+
+        maven {
+            url "${environmental("artifactory_contextUrl")}/gradle-release"
+
+            credentials {
+                setUsername(
+                    environmental("artifactory_user")
+                )
+                setPassword(
+                    environmental("artifactory_password")
+                )
+            }
+        }
+
+        maven { url "https://jitpack.io" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
 }
 
-test {
-    useJUnitPlatform()
-}
+subprojects {
+    apply plugin: "maven-publish"
 
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
-}
+    apply plugin: "com.github.johnrengelman.shadow"
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "org.jetbrains.kotlin.kapt"
+
+    dependencies {
+        if (project.name != "commons") {
+            implementation project(":commons")
+        }
+
+        compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
+    }
+
+    compileKotlin {
+        kotlinOptions.javaParameters = true
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    shadowJar {
+        archiveClassifier.set("")
+
+        exclude "**/*.kotlin_metadata"
+        exclude "**/*.kotlin_module"
+        exclude "**/*.kotlin_builtins"
+
+        exclude "META-INF/"
+
+        archiveFileName = "eureka-${project.name}.jar"
+    }
+
+    publishing {
+        publications {
+            shadow(MavenPublication) { publication ->
+                project.shadow.component(publication)
+            }
+        }
+
+        repositories {
+            maven {
+                name "Scala"
+                url "${environmental("artifactory_contextUrl")}/gradle-release"
+
+                credentials {
+                    username environmental("artifactory_user")
+                    password environmental("artifactory_password")
+                }
+            }
+        }
+    }
+
+    tasks.build.dependsOn(
+        shadowJar,
+        publishShadowPublicationToScalaRepository
+    )
 }
