@@ -9,11 +9,14 @@ import kotlin.reflect.KProperty
  * @since 6/26/2022
  */
 class Lease<T>(
-    private val compute: () -> T
+    private val compute: () -> T,
+    private val strategy: LeaseStrategy
 ) : ReadWriteProperty<Any?, T?>
 {
     private var value: T? = null
     private var valueExpired: T? = null
+
+    private var lock = Any()
 
     fun invalidate()
     {
@@ -21,19 +24,32 @@ class Lease<T>(
         this.value = null
     }
 
+    private fun compute() =
+        this.compute.invoke()
+            .apply {
+                synchronized(lock)
+                {
+                    value = this
+                }
+            }
+
     private fun asyncCompute()
     {
-        ForkJoinPool.commonPool().execute {
-            this.compute.invoke().let { this.value = it }
-        }
+        ForkJoinPool.commonPool()
+            .execute {
+                compute()
+            }
     }
 
     private fun value(): T?
     {
         if (this.value == null)
         {
-            this.asyncCompute()
-            return this.valueExpired
+            return when (strategy)
+            {
+                LeaseStrategy.Compute -> this.compute()
+                LeaseStrategy.Expired -> this.valueExpired
+            }
         }
 
         return this.value

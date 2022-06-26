@@ -1,6 +1,7 @@
 package io.liftgate.eureka.commons
 
 import io.liftgate.eureka.commons.lease.Lease
+import io.liftgate.eureka.commons.lease.LeaseStrategy
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.time.temporal.ChronoUnit
@@ -24,5 +25,6 @@ fun String.legacy() = LegacyComponentSerializer
 fun UUID.audience() = platform.audience
 
 inline fun <reified T> lease(
+    strategy: LeaseStrategy = LeaseStrategy.Compute,
     noinline compute: () -> T
-): Lease<T> = Lease(compute)
+): Lease<T> = Lease(compute, strategy)

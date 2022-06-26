@@ -5,6 +5,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import io.liftgate.eureka.commons.lease
+import io.liftgate.eureka.commons.lease.LeaseStrategy
 import io.liftgate.eureka.commons.rank.metadata.defaults.DisplayNameMetadata
 import io.liftgate.eureka.commons.rank.metadata.defaults.NameMetadata
 import io.liftgate.eureka.commons.rank.metadata.defaults.VisibilityMetadata
@@ -37,7 +38,9 @@ object RankService
         reload()
     }
 
-    val sortedRankFormat by lease {
+    val sortedRankFormat by lease(
+        strategy = LeaseStrategy.Compute
+    ) {
         val component = Component.empty()
         val ranks = ranks.values
 
