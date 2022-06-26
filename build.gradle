@@ -39,6 +39,7 @@ allprojects {
         }
 
         maven { url "https://jitpack.io" }
+        maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
@@ -54,10 +55,10 @@ subprojects {
     dependencies {
         if (project.name != "commons") {
             implementation project(":commons")
-        }
 
-        compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
-        compileOnly "gg.scala.store:${project.name}:$storeVersion"
+            compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
+            compileOnly "gg.scala.store:${project.name}:$storeVersion"
+        }
     }
 
     compileKotlin {
