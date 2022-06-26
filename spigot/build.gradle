@@ -1,4 +1,9 @@
 dependencies {
     kapt "me.lucko:helper:$helperVersion"
     compileOnly "gg.scala.spigot:sspigot-server:$spigotVersion"
+
+    compileOnly "gg.scala.cloudsync:spigot:$cloudSyncVersion"
+
+    implementation "com.akuleshov7:ktoml-core:$kTomlVersion"
+    implementation "com.akuleshov7:ktoml-file:$kTomlVersion"
 }
