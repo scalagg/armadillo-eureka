@@ -4,6 +4,7 @@ import io.liftgate.eureka.commons.rank.RankService
 import io.liftgate.eureka.commons.rank.metadata.annotate.MetadataDefault
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import java.lang.reflect.Type
 
 /**
  * @author GrowlyX
@@ -17,6 +18,8 @@ class NameMetadata : DefaultMetadata<String>("Default")
     override fun name() = "Name"
     override fun description() =
         "Describes the rank mentioned in a single word."
+
+    override fun getAbstractType() = NameMetadata::class.java
 }
 
 @MetadataDefault
@@ -31,6 +34,8 @@ class DisplayNameMetadata : MiniMessageMetadata(
     override fun name() = "Display Name"
     override fun description() =
         "Displayed on the response of a list command, scoreboard, or something else."
+
+    override fun getAbstractType() = DisplayNameMetadata::class.java
 }
 
 @MetadataDefault
@@ -41,6 +46,8 @@ class PrefixMetadata : MiniMessageMetadata(
     override fun name() = "Prefix"
     override fun description() =
         "Displayed at the beginning of the player's username in a chat message."
+
+    override fun getAbstractType() = PrefixMetadata::class.java
 }
 
 @MetadataDefault
@@ -51,6 +58,8 @@ class SuffixMetadata : MiniMessageMetadata(
     override fun name() = "Suffix"
     override fun description() =
         "Displayed at the end of the player's username in a chat message."
+
+    override fun getAbstractType() = SuffixMetadata::class.java
 }
 
 @MetadataDefault
@@ -61,6 +70,8 @@ class ColorMetadata : MiniMessageMetadata(
     override fun name() = "Color"
     override fun description() =
         "Displayed at the beginning of a name-tag, or something of that sort."
+
+    override fun getAbstractType() = ColorMetadata::class.java
 }
 
 @MetadataDefault
@@ -69,6 +80,8 @@ class VisibilityMetadata : BooleanMetadata(true)
     override fun name() = "Visibility"
     override fun description() =
         "Is this a public rank or no? You decide"
+
+    override fun getAbstractType() = VisibilityMetadata::class.java
 }
 
 @MetadataDefault
@@ -77,6 +90,8 @@ class WeightMetadata : IntegerMetadata(RankService.available())
     override fun name() = "Weight"
     override fun description() =
         "Where does this rank lie in the list of available ranks?"
+
+    override fun getAbstractType() = WeightMetadata::class.java
 }
 
 

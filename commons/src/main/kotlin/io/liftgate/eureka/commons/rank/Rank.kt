@@ -8,6 +8,7 @@ import io.liftgate.eureka.commons.PlatformType
 import io.liftgate.eureka.commons.config
 import io.liftgate.eureka.commons.message
 import io.liftgate.eureka.commons.rank.metadata.RankMetadataContainer
+import io.liftgate.eureka.commons.reference.impl.RankReference
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -21,7 +22,7 @@ data class Rank(
 {
     val container = RankMetadataContainer()
 
-    val children = mutableListOf<UUID>()
+    val children = mutableListOf<RankReference>()
     val permissions = mutableMapOf<PlatformType, MutableMap<String, MutableList<String>>>()
 
     init
@@ -52,9 +53,7 @@ data class Rank(
             }
 
         this.children
-            .mapNotNull {
-                RankService.findRank(it)
-            }
+            .mapNotNull { it.parsed() }
             .flatMap { it.applicablePermissions() }
             .filter { !compoundedPermissions.contains(it) }
             .forEach {
@@ -68,7 +67,7 @@ data class Rank(
     {
         children.toList()
             .filter {
-                RankService.findRank(it) == null
+                it.parsed() == null
             }
             .forEach {
                 this.children.remove(it)
