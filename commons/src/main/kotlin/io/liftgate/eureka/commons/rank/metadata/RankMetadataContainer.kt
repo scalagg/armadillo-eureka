@@ -23,7 +23,8 @@ class RankMetadataContainer
     {
         for (kClass in kClasses)
         {
-            this.metadata[kClass] = kClass.java.newInstance()
+            this.metadata[kClass] = kClass.java
+                .getDeclaredConstructor().newInstance()
         }
     }
 }

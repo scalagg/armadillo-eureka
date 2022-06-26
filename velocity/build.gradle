@@ -6,7 +6,3 @@ dependencies {
     compileOnly "com.velocitypowered:velocity-api:$velocityVersion"
     kapt "com.velocitypowered:velocity-api:$velocityVersion"
 }
-
-shadowJar {
-    exclude "**/kotlin/**"
-}

@@ -12,7 +12,7 @@ object LiftEurekaCommons
 {
     lateinit var platform: LiftEurekaPlatform
 
-    private val flavor = Flavor
+    val flavor = Flavor
         .create<LiftEurekaCommons>(
             FlavorOptions(platform.logging)
         )

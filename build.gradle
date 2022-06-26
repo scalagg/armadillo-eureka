@@ -23,6 +23,8 @@ allprojects {
     version "0.0.0.1"
 
     repositories {
+        mavenCentral()
+
         maven {
             url "${environmental("artifactory_contextUrl")}/gradle-release"
 
@@ -35,7 +37,6 @@ allprojects {
                 )
             }
         }
-        mavenCentral()
 
         maven { url "https://jitpack.io" }
         maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
@@ -45,13 +46,14 @@ allprojects {
 
 subprojects {
     apply plugin: "maven-publish"
-
     apply plugin: "com.github.johnrengelman.shadow"
 
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: "org.jetbrains.kotlin.kapt"
 
     dependencies {
+        compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.0"
+
         if (project.name != "commons") {
             implementation project(":commons")
             compileOnly "gg.scala.store:${project.name}:$storeVersion"
@@ -59,8 +61,8 @@ subprojects {
             compileOnly "gg.scala.store:shared:$storeVersion"
         }
 
-        // TODO: fix liftgate commons
-        compileOnly fileTree("test")
+        compileOnly fileTree("lol")
+        compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
     }
 
     compileKotlin {
@@ -76,6 +78,7 @@ subprojects {
         exclude "**/*.kotlin_builtins"
 
         exclude "META-INF/"
+        exclude "**/kotlin/**"
 
         archiveFileName.set("eureka-${project.name}.jar")
     }

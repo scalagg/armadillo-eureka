@@ -1,2 +1,2 @@
-rootProject.setName("liftgate-eureka")
+rootProject.name = "liftgate-eureka"
 include("commons", "spigot", "velocity")

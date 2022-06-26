@@ -1,12 +1,14 @@
 package io.liftgate.eureka.commons
 
+import gg.scala.aware.message.AwareMessage
+import io.liftgate.eureka.commons.communication.CommunicationsService
+import io.liftgate.eureka.commons.configuration.EurekaGeneralConfig
 import io.liftgate.eureka.commons.lease.Lease
 import io.liftgate.eureka.commons.lease.LeaseStrategy
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
@@ -17,6 +19,9 @@ val forever = ChronoUnit.FOREVER.duration!!
 val platform: LiftEurekaPlatform
     get() = LiftEurekaCommons.platform
 
+val config: EurekaGeneralConfig
+    get() = platform.generalConfig.value
+
 fun String.text() =
     Component.text(this)
 
@@ -25,6 +30,18 @@ fun String.legacy() = LegacyComponentSerializer
 
 fun UUID.audience() = platform
     .audience.value.player(this)
+
+fun message(
+    packet: String,
+    vararg meta: Pair<String, Any>
+): AwareMessage
+{
+    return AwareMessage.of(
+        packet,
+        CommunicationsService.aware,
+        *meta
+    )
+}
 
 inline fun <reified T> lease(
     strategy: LeaseStrategy = LeaseStrategy.Compute,

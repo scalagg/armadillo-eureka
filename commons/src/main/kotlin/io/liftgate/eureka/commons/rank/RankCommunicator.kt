@@ -17,10 +17,11 @@ object RankCommunicator
         message: AwareMessage
     )
     {
-        RankService.invalidate()
         RankService.reload().join()
 
         LeaseDependency
-            .invalidateDependant(Rank::class)
+            .invalidateDependant(
+                Rank::class
+            )
     }
 }

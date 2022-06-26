@@ -23,7 +23,7 @@ object CommunicationsService
     @Inject
     lateinit var indexer: PackageIndexer
 
-    private val aware by lazy {
+    val aware by lazy {
         AwareBuilder.of<AwareMessage>("eureka")
             .logger(platform.logging)
             .codec(AwareMessageCodec)

@@ -7,6 +7,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import io.liftgate.eureka.commons.LiftEurekaCommons
 import io.liftgate.eureka.commons.lease
 import io.liftgate.eureka.commons.lease.LeaseStrategy
 import io.liftgate.eureka.commons.rank.metadata.RankMetadata
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author GrowlyX
@@ -29,17 +31,11 @@ import java.util.concurrent.CompletableFuture
 object RankService
 {
     private val ranks =
-        mutableMapOf<UUID, Rank>()
-
-    private val metadataIndexer = PackageIndexer(
-        RankMetadata::class,
-        FlavorOptions(
-            `package` = "io.liftgate.eureka.commons.rank.metadata.defaults"
-        )
-    )
+        ConcurrentHashMap<UUID, Rank>()
 
     @Suppress("UNCHECKED_CAST")
-    private val defaults = metadataIndexer
+    private val defaults = LiftEurekaCommons
+        .flavor.reflections
         .getTypesAnnotatedWith<MetadataDefault>()
         .map { it as Class<RankMetadata<*>> }
 
@@ -51,12 +47,11 @@ object RankService
         DataStoreObjectControllerCache
             .create<Rank>()
 
-        invalidate()
         reload()
     }
 
     @Close
-    fun close() = invalidate()
+    fun close() = this.ranks.clear()
 
     fun configureDefaultMeta(rank: Rank)
     {
@@ -127,17 +122,13 @@ object RankService
         return findRank("Default") ?: createDefaultRank()
     }
 
-    fun invalidate()
-    {
-        this.ranks.clear()
-    }
-
     fun reload(): CompletableFuture<Void>
     {
         return DataStoreObjectControllerCache
             .findNotNull<Rank>()
             .loadAll(DataStoreStorageType.MONGO)
             .thenAccept { entries ->
+                this.ranks.clear()
                 this.ranks.putAll(entries)
 
                 this.ranks.ifEmpty {
@@ -152,7 +143,12 @@ object RankService
             UUID.randomUUID()
         )
 
+        rank
+            .saveAndPushUpdatesGlobally()
+            .join()
+
         this.ranks[rank.identifier] = rank
+
         return rank
     }
 }

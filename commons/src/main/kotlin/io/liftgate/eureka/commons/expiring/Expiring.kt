@@ -47,24 +47,33 @@ abstract class Expiring(
         .formatIntoCalendarString(expirationDate)
 
     val durationFormat = if (permanent)
-        "permanent" else DurationFormatUtils
-        .formatDurationWords(
-            duration.toMillis(), true, true
-        )
+        "permanent" else
+    {
+        DurationFormatUtils
+            .formatDurationWords(
+                duration.toMillis(), true, true
+            )
+    }
 
     val durationFancyFormat: String
         get() = if (permanent)
-            "not expire" else "expire in ${
+            "not expire" else
+        {
+            "expire in ${
+                DurationFormatUtils.formatDurationWords(
+                    expirationDate.time - System.currentTimeMillis(),
+                    true, true
+                )
+            }"
+        }
+
+    val durationFromNowFormat: String
+        get() = if (permanent)
+            "not expire" else
+        {
             DurationFormatUtils.formatDurationWords(
                 expirationDate.time - System.currentTimeMillis(),
                 true, true
             )
-        }"
-
-    val durationFromNowFormat: String
-        get() = if (permanent)
-            "not expire" else DurationFormatUtils.formatDurationWords(
-            expirationDate.time - System.currentTimeMillis(),
-            true, true
-        )
+        }
 }
