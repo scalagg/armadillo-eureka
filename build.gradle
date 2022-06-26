@@ -20,11 +20,9 @@ String environmental(String key)
 
 allprojects {
     group "io.liftgate.lib"
-    version "2.0.0"
+    version "0.0.0.1"
 
     repositories {
-        mavenCentral()
-
         maven {
             url "${environmental("artifactory_contextUrl")}/gradle-release"
 
@@ -37,6 +35,7 @@ allprojects {
                 )
             }
         }
+        mavenCentral()
 
         maven { url "https://jitpack.io" }
         maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
@@ -55,15 +54,18 @@ subprojects {
     dependencies {
         if (project.name != "commons") {
             implementation project(":commons")
-
-            compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
             compileOnly "gg.scala.store:${project.name}:$storeVersion"
+        } else {
+            compileOnly "gg.scala.store:shared:$storeVersion"
         }
+
+        // TODO: fix liftgate commons
+        compileOnly fileTree("test")
     }
 
     compileKotlin {
         kotlinOptions.javaParameters = true
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     shadowJar {
