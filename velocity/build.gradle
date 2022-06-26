@@ -4,5 +4,5 @@ dependencies {
 }
 
 shadowJar {
-    exclude "**/kotlin/"**
+    exclude "**/kotlin/**"
 }
