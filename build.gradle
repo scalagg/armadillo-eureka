@@ -57,6 +57,7 @@ subprojects {
         }
 
         compileOnly "io.liftgate.lib:${project.name}:$liftLibVersion"
+        compileOnly "gg.scala.store:${project.name}:$storeVersion"
     }
 
     compileKotlin {
@@ -73,7 +74,7 @@ subprojects {
 
         exclude "META-INF/"
 
-        archiveFileName = "eureka-${project.name}.jar"
+        archiveFileName.set("eureka-${project.name}.jar")
     }
 
     publishing {
@@ -85,7 +86,7 @@ subprojects {
 
         repositories {
             maven {
-                name "Scala"
+                name "liftgate"
                 url "${environmental("artifactory_contextUrl")}/gradle-release"
 
                 credentials {
@@ -98,6 +99,6 @@ subprojects {
 
     tasks.build.dependsOn(
         shadowJar,
-        publishShadowPublicationToScalaRepository
+        publishShadowPublicationToLiftgateRepository
     )
 }
