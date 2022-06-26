@@ -19,7 +19,7 @@ class RankMetadataContainer
         mutableMapOf<KClass<out RankMetadata<*>>, RankMetadata<*>>()
 
     inline fun <reified T : RankMetadata<*>> metadata() =
-        this.metadata[T::class]!!
+        this.metadata[T::class]!! as T
 
     inline fun <reified T : RankMetadata<*>> value() =
         this.metadata<T>().value

@@ -4,8 +4,15 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import io.liftgate.eureka.commons.lease
+import io.liftgate.eureka.commons.rank.metadata.defaults.DisplayNameMetadata
 import io.liftgate.eureka.commons.rank.metadata.defaults.NameMetadata
-import java.util.UUID
+import io.liftgate.eureka.commons.rank.metadata.defaults.VisibilityMetadata
+import io.liftgate.eureka.commons.rank.metadata.defaults.WeightMetadata
+import io.liftgate.eureka.commons.text
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -18,6 +25,8 @@ object RankService
     private val ranks =
         mutableMapOf<UUID, Rank>()
 
+    fun available() = ranks.size
+
     @Configure
     fun configure()
     {
@@ -26,6 +35,41 @@ object RankService
 
         invalidate()
         reload()
+    }
+
+    val sortedRankFormat by lease {
+        val component = Component.empty()
+        val ranks = ranks.values
+
+        val comma = Component.text()
+            .color(NamedTextColor.WHITE)
+            .append(", ".text())
+
+        ranks
+            .filter {
+                it.container
+                    .metadata<VisibilityMetadata>()
+                    .value
+            }
+            .sortedBy {
+                -it.container
+                    .metadata<WeightMetadata>()
+                    .value
+            }
+            .forEachIndexed { index, rank ->
+                val container = rank.container
+                    .metadata<DisplayNameMetadata>()
+                    .value
+
+                component.append(container)
+
+                if (index != ranks.size - 1)
+                {
+                    component.append(comma)
+                }
+            }
+
+        component
     }
 
     fun findRank(uuid: UUID): Rank?

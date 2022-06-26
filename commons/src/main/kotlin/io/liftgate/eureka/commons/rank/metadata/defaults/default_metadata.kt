@@ -1,5 +1,6 @@
 package io.liftgate.eureka.commons.rank.metadata.defaults
 
+import io.liftgate.eureka.commons.rank.RankService
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 
@@ -63,7 +64,7 @@ class VisibilityMetadata : BooleanMetadata(true)
         "Is this a public rank or no? You decide"
 }
 
-class WeightMetadata : IntegerMetadata(0)
+class WeightMetadata : IntegerMetadata(RankService.available())
 {
     override fun name() = "Weight"
     override fun description() =

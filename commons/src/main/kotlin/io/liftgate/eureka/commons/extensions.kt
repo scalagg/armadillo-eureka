@@ -1,5 +1,6 @@
 package io.liftgate.eureka.commons
 
+import io.liftgate.eureka.commons.lease.Lease
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.time.temporal.ChronoUnit
@@ -21,3 +22,7 @@ fun String.legacy() = LegacyComponentSerializer
     .legacyAmpersand().deserialize(this)
 
 fun UUID.audience() = platform.audience
+
+inline fun <reified T> lease(
+    noinline compute: () -> T
+): Lease<T> = Lease(compute)
